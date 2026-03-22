@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { mkdtemp, rm, readFile, writeFile, mkdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { init } from '../src/init.js';
@@ -149,45 +149,54 @@ test('update returns success when initialized', async () => {
   }
 });
 
-test('update installs new bundled agents not already present', async () => {
+test('update succeeds when no bundled agents exist', async () => {
   const tempDir = await mkdtemp(join(tmpdir(), 'opensquad-test-'));
   try {
     await init(tempDir, { _skipPrompts: true });
-
-    // Remove one agent to simulate a user with an older version
-    const agentsDir = join(tempDir, 'agents');
-    const entries = await readdir(agentsDir);
-    const agentFiles = entries.filter((f) => f.endsWith('.agent.md'));
-    assert.ok(agentFiles.length > 0, 'Should have agents after init');
-
-    // Delete one agent
-    await rm(join(agentsDir, agentFiles[0]), { force: true });
-    const countBefore = (await readdir(agentsDir)).filter((f) => f.endsWith('.agent.md')).length;
-
-    await update(tempDir);
-
-    // After update, the deleted agent should be reinstalled
-    const countAfter = (await readdir(agentsDir)).filter((f) => f.endsWith('.agent.md')).length;
-    assert.ok(countAfter > countBefore, 'Update should install missing agents');
+    const result = await update(tempDir);
+    assert.equal(result.success, true);
+    // No bundled agents — agents/ dir should not exist
+    await assert.rejects(
+      stat(join(tempDir, 'agents')),
+      { code: 'ENOENT' }
+    );
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
 });
 
-test('update does not overwrite existing agent files', async () => {
+test('update preserves user-created agent files', async () => {
   const tempDir = await mkdtemp(join(tmpdir(), 'opensquad-test-'));
   try {
     await init(tempDir, { _skipPrompts: true });
-
-    // Modify an agent file to simulate user customization
-    const agentPath = join(tempDir, 'agents', 'researcher.agent.md');
-    await writeFile(agentPath, 'custom user content', 'utf-8');
+    // User manually created an agent
+    const agentsDir = join(tempDir, 'agents');
+    await mkdir(agentsDir, { recursive: true });
+    await writeFile(join(agentsDir, 'custom.agent.md'), 'my agent', 'utf-8');
 
     await update(tempDir);
 
-    // User's customized agent should be preserved
-    const content = await readFile(agentPath, 'utf-8');
-    assert.equal(content, 'custom user content');
+    const content = await readFile(join(agentsDir, 'custom.agent.md'), 'utf-8');
+    assert.equal(content, 'my agent');
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test('update auto-imports bundled skills with env requirements', async () => {
+  const tempDir = await mkdtemp(join(tmpdir(), 'opensquad-test-'));
+  try {
+    await init(tempDir, { _skipPrompts: true });
+    // image-generator is the canonical non-MCP skill with env requirements (env: [OPENROUTER_API_KEY])
+    // Simulate a user who installed opensquad before this skill was bundled
+    await rm(join(tempDir, 'skills', 'image-generator'), { recursive: true, force: true });
+
+    await update(tempDir);
+
+    // image-generator has `env: [OPENROUTER_API_KEY]` and should be re-installed by update
+    const skillMd = join(tempDir, 'skills', 'image-generator', 'SKILL.md');
+    const content = await readFile(skillMd, 'utf-8');
+    assert.ok(content.includes('OPENROUTER_API_KEY'));
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }

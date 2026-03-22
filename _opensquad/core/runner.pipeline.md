@@ -153,7 +153,8 @@ When an agent's `.agent.md` frontmatter contains a `tasks:` field:
    e. Check task veto conditions (same enforcement as step veto conditions below)
 
 3. **Final output**: The output of the LAST task in the chain becomes the step's output
-   - Save to the step's outputFile path
+   - Apply the Output Path Transformation (Steps 1 and 2: run_id injection + version folder) to the `outputFile` path before saving — this applies regardless of whether the step runs as `execution: inline` or `execution: subagent`
+   - Save to the **transformed** outputFile path
    - This is what the next step (or checkpoint) receives
 
 4. **Progress reporting**: For inline execution, announce each task:
@@ -236,6 +237,7 @@ Apply this transformation consistently for every write in this step.
 - Inform user: `🔍 {Agent Name} is working in the background...`
 - Read the step's `model_tier` frontmatter field (if present).
   Valid values: `fast` or `powerful`. If absent or any other value: default to `powerful`.
+- **Before building the subagent prompt**: Apply the Output Path Transformation (Step 1: run_id injection + Step 2: version folder) to all output paths referenced in the step file. Store the transformed path(s) in working memory — they will be used both in the prompt and in post-completion verification. Never pass raw paths from the step file to the subagent.
 - Use the Task tool to dispatch the step as a subagent:
   - If `model_tier: fast`: use the fastest/lightest model available in the current environment.
     You know your own environment — use the lightest model you can dispatch:
@@ -249,9 +251,9 @@ Apply this transformation consistently for every write in this step.
   - The veto conditions from the step file (agent should self-check before completing)
   - The company context
   - The squad memory
-  - The path to save output
+  - The **transformed** path to save output (e.g., `squads/{name}/output/2026-03-20-140736/slides/v1/draft.md`)
 - Wait for the subagent to complete
-- Read the output file to verify it was created
+- Read the output file to verify it was created — use the **stored transformed path**, not the raw step path
 - Inform user: `✓ {Agent Name} completed`
 
 #### If `execution: inline`
@@ -259,7 +261,7 @@ Apply this transformation consistently for every write in this step.
 - Announce: `{icon} {Agent Name} is working...`
 - Follow the step instructions
 - Present output directly in the conversation
-- Save output to the specified output file
+- Save output to the specified output file — apply the Output Path Transformation (Steps 1 and 2) to the path before writing. Do not write to the raw path from the step file.
 
 #### If `type: checkpoint`
 - Present the checkpoint message to the user
@@ -267,7 +269,7 @@ Apply this transformation consistently for every write in this step.
 - Wait for user input before proceeding
 - Save the user's choice/response for the next step
 - **If the step frontmatter contains `outputFile`**: after collecting the user's full response,
-  write it to the specified file using the Write tool before moving to the next step.
+  apply the Output Path Transformation **Step 1 only** (run_id injection — skip Step 2, version folder) to the `outputFile` path, then write the response to the transformed path using the Write tool before moving to the next step. Checkpoint files are user input captures, not versioned output — Step 2 does not apply here, regardless of the general "every write" rule in the Output Path Transformation section above.
   Use this format:
   ```
   # Research Focus
@@ -347,18 +349,26 @@ After a step completes output and there IS a next step (MANDATORY):
     - `"status": "completed"`
     - All agents: `"status": "done"`, `"deliverTo": null`
     - `"updatedAt"`: now
+    - `"completedAt"`: now
     - `"startedAt"`: preserve from existing `state.json`
     - Keep existing `"handoff"` object
 
 ### Post-Completion Cleanup
 
-After writing the final "completed" state to `squads/{name}/state.json` and waiting 10 seconds (so the dashboard can display the completed state), **delete** `squads/{name}/state.json`:
+After writing the final "completed" state to `squads/{name}/state.json`:
 
-```bash
-rm squads/{name}/state.json
-```
+1. Add the `completedAt` field (or `failedAt` if status is `failed`) with the current ISO timestamp
+2. Copy `state.json` to the run output folder for permanent history:
+   ```bash
+   cp squads/{name}/state.json squads/{name}/output/{run_id}/state.json
+   ```
+3. Wait 10 seconds (so the dashboard can display the completed state)
+4. Delete the working copy:
+   ```bash
+   rm squads/{name}/state.json
+   ```
 
-This ensures the squad no longer appears as active in the centralized dashboard.
+This archives the run state for the `runs` command while keeping the squad root clean.
 
 2. Update squad memory (`squads/{name}/_memory/memories.md`) with:
    - What the user approved/rejected

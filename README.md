@@ -8,6 +8,12 @@ Crie squads de agentes de IA que trabalham juntos — direto do seu IDE.
 2. **Abra o Chat do Cursor** (Ctrl+L ou ícone de chat).
 3. **Digite na caixa de mensagem** um dos comandos abaixo. O assistente passa a seguir as regras do Opensquad e responde com o menu ou a ação pedida.
 
+## Veja em ação
+
+[![Assista ao vídeo de lançamento](https://img.youtube.com/vi/CL1ppI4qHeU/maxresdefault.jpg)](https://www.youtube.com/watch?v=CL1ppI4qHeU)
+
+## O que é um Squad?
+
 **Comandos que você pode digitar:**
 
 | O que você digita | O que acontece |
@@ -95,6 +101,12 @@ Create AI squads that work together — right from your IDE.
 ## How to Use
 
 Open this folder in your IDE and type:
+
+## See it in action
+
+[![Watch the launch video](https://img.youtube.com/vi/CL1ppI4qHeU/maxresdefault.jpg)](https://www.youtube.com/watch?v=CL1ppI4qHeU)
+
+## What is a Squad?
 
 ```
 /opensquad

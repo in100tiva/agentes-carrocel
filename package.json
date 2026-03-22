@@ -2,11 +2,26 @@
   "name": "opensquad-project",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "bin": {
+    "opensquad": "bin/opensquad.js"
+  },
   "scripts": {
     "dashboard:generate": "npm run build --prefix dashboard && node scripts/copy-dashboard.js",
-    "dashboard:dev": "cd dashboard && npm run dev"
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "test": "node --test tests/*.test.js",
+    "lint": "eslint src/ bin/ tests/",
+    "version": "node -e \"require('fs').writeFileSync('templates/_opensquad/.opensquad-version', require('./package.json').version + '\\n')\" && git add templates/_opensquad/.opensquad-version"
   },
   "dependencies": {
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "@inquirer/checkbox": "^5.1.0",
+    "@inquirer/input": "^5.0.0",
+    "@inquirer/select": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0"
   }
 }

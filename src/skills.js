@@ -1,9 +1,11 @@
 import { cp, readdir, readFile, rm, stat } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BUNDLED_SKILLS_DIR = join(__dirname, '..', 'skills');
+
+const metaCache = new Map();
 
 export async function listInstalled(targetDir) {
   try {
@@ -28,6 +30,7 @@ export async function listAvailable() {
 }
 
 export async function getSkillMeta(id) {
+  if (metaCache.has(id)) return metaCache.get(id);
   try {
     const raw = await readFile(join(BUNDLED_SKILLS_DIR, id, 'SKILL.md'), 'utf-8');
     const content = raw.replace(/\r\n/g, '\n');
@@ -73,9 +76,14 @@ export async function getSkillMeta(id) {
       }
     }
 
-    return { name, description, descriptions, type, env };
+    const result = { name, description, descriptions, type, env };
+    metaCache.set(id, result);
+    return result;
   } catch (err) {
-    if (err.code === 'ENOENT') return null;
+    if (err.code === 'ENOENT') {
+      metaCache.set(id, null);
+      return null;
+    }
     throw err;
   }
 }
@@ -92,17 +100,28 @@ export async function installSkill(id, targetDir) {
   try {
     await stat(srcDir);
   } catch (err) {
-    if (err.code === 'ENOENT') throw new Error(`Skill '${id}' not found in registry`);
+    if (err.code === 'ENOENT') throw new Error(`Skill '${id}' not found in registry`, { cause: err });
     throw err;
   }
   const destDir = join(targetDir, 'skills', id);
+  const resolvedSrc = resolve(srcDir);
+  const resolvedDest = resolve(destDir);
+  if (resolvedSrc === resolvedDest || resolvedDest.startsWith(resolvedSrc + sep)) {
+    return;
+  }
   await cp(srcDir, destDir, { recursive: true });
+  metaCache.delete(id);
 }
 
 export async function removeSkill(id, targetDir) {
   validateSkillId(id);
   const skillDir = join(targetDir, 'skills', id);
   await rm(skillDir, { recursive: true, force: true });
+  metaCache.delete(id);
+}
+
+export function clearMetaCache() {
+  metaCache.clear();
 }
 
 export async function getSkillVersion(id, targetDir) {
