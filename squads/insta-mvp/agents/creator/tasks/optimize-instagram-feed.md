@@ -3,6 +3,7 @@ task: "Otimizar carrossel e legenda"
 order: 3
 input: |
   - carousel_draft: output da tarefa create-instagram-feed
+  - cta_escolhida: selected-cta.md (step 07b), quando existir
   - quality_criteria: pipeline/data/quality-criteria.md
 output: |
   - slides: versão revisada dos slides (ajustes de headline/texto se necessário)
@@ -16,8 +17,8 @@ Revisar o rascunho do carrossel e da legenda contra os critérios de qualidade: 
 ## Process
 
 1. Ler carousel_draft e quality_criteria.
-2. Verificar cada slide: headline + supporting text, contagem de palavras, alternância de background, CTA no último.
-3. Verificar caption_draft: primeiros 125, corpo, pergunta/CTA, triangulação.
+2. Verificar cada slide: headline + supporting text, contagem de palavras, alternância de background, **último slide com gancho + CTA coerentes com selected-cta.md** (salvar / seguir / comentar).
+3. Verificar caption_draft: primeiros 125, corpo, **fechamento com a mesma CTA**, triangulação.
 4. Aplicar correções pontuais; manter tom e ângulo.
 5. Entregar slides e caption_draft revisados (sem hashtags).
 

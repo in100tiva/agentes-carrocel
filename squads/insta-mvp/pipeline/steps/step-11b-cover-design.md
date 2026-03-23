@@ -9,6 +9,7 @@ outputFile: squads/insta-mvp/output/{run_id}/slides/slide-01.html
 
 ## Context Loading
 
+- `squads/insta-mvp/output/{run_id}/selected-cover-image.md` — **obrigatório:** escolha do usuário no step 07c — fundo do **slide 1** (`Corvo-Surpreso` em `pipeline/data/references/cover-assets/` ou outro caminho). Só a capa usa esta imagem; slides 2+ usam panorama (`backgrounds/bg-NN`).
 - `squads/insta-mvp/output/{run_id}/carousel-draft.md` — título da capa, micro-copy, ângulo, tom, accent keywords (slide 1)
 - `squads/insta-mvp/pipeline/data/design-system-carousel-instagram.md` — **obrigatório:** seção CAPA (elementos, hierarquia, camadas)
 - `squads/insta-mvp/pipeline/data/design-system-carousel-cover.md` — **obrigatório:** medidas em %, tipografia em px, mascote como fundo, degradê, posicionamento
@@ -19,11 +20,12 @@ outputFile: squads/insta-mvp/output/{run_id}/slides/slide-01.html
 
 ## Instructions
 
-1. Carregar o carousel-draft (slide 1: título, tema, ângulo, tom, palavras-chave).
-2. Executar agente **Carlos Capa**: tarefa design-cover. O agente deve **ao início** aplicar os padrões e regras de design-system-carousel-instagram.md (CAPA) e design-system-carousel-cover.md (medidas, mascote, degradê). Criar capa **chamativa** com:
-   - Mascote escolhido como fundo (via guia de mascotes).
-   - Degradê sutil por cima do mascote para facilitar a legibilidade dos textos.
-   - Mascote posicionado de forma que **não seja cortado** e **não atrapalhe** a leitura (zona de texto livre).
+1. Carregar `selected-cover-image.md` e o carousel-draft (slide 1: título, tema, ângulo, tom, palavras-chave).
+2. Executar agente **Carlos Capa**: tarefa design-cover. O agente deve **ao início** aplicar os padrões e regras de design-system-carousel-instagram.md (CAPA) e design-system-carousel-cover.md (medidas, degradê). Criar capa **chamativa** com:
+   - **Fundo do slide 1** conforme `selected-cover-image.md`: copiar o PNG para `output/{run_id}/v1/cover-assets/` se necessário e referenciar em `slide-01.html` (ex.: `../cover-assets/Corvo-Surpreso.png`). **Ou**, se o usuário escolheu outra imagem, usar o caminho indicado. **Não** usar `bg-01.png` do panorama na capa quando a escolha for imagem dedicada de capa.
+   - Se **não** houver imagem dedicada e o brief pedir mascote clássico: mascote de `mascote-references/` (via guia de mascotes).
+   - Degradê sutil por cima da **imagem de fundo** (Corvo-Surpreso, outra PNG ou mascote) para legibilidade dos textos.
+   - Imagem de fundo posicionada (`background-size: cover` etc.) para **não atrapalhar** a leitura na área do título.
    - Todos os elementos obrigatórios: badge pill, nav →, micro-copy, título, badge secundário, anotação manuscrita, dots.
 3. Salvar `slide-01.html` em `squads/insta-mvp/output/{run_id}/slides/slide-01.html`.
 4. Salvar metadado (mascote_escolhido, justificativa) em `output/{run_id}/cover-meta.md` ou em comentário no HTML.
@@ -42,4 +44,4 @@ outputFile: squads/insta-mvp/output/{run_id}/slides/slide-01.html
 ## Quality Criteria
 
 - [ ] Capa segue medidas e hierarquia do design-system-carousel-cover.md.
-- [ ] Mascote em fundo com degradê; texto legível; mascote não cortado nem atrapalhando leitura.
+- [ ] Fundo da capa conforme `selected-cover-image.md` + degradê; texto legível.

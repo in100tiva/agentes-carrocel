@@ -1,0 +1,8 @@
+{
+  "name": "insta-mvp-squad",
+  "private": true,
+  "description": "Scripts locais do squad insta-mvp (render, fundos stock)",
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}

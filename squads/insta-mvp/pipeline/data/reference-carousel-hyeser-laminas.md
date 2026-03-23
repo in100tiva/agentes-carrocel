@@ -168,7 +168,7 @@ Ao replicar este padrão em novos carrosséis:
 
 - [ ] Alternar fundos claros e escuros entre slides para ritmo.
 - [ ] Usar **paleta MVP Flow:** roxo (#8B5CF6, #7C3AED, #A78BFA) para títulos-chave, destaques, barras e caixas; branco e preto para texto e fundos (ver brand-mvp-flow-colors.md).
-- [ ] Incluir em toda lâmina: footer com nome/marca (ex.: MVP Flow · in100tiva).
+- [ ] Incluir em toda lâmina: footer **`TheCrowDev`**; badge superior fixo **`Ética & dados`** (ver `carousel-branding-thecrowdev.md`).
 - [ ] Evitar contador "3/8"; usar apenas pontos de paginação.
 - [ ] Considerar: círculo incompleto, oval hand-drawn, caixa com borda tracejada, balão de fala, mockup de celular, quando fizer sentido para o copy.
 - [ ] Títulos em bold, preferencialmente maiúsculas; corpo em regular; uma frase em script ou handwritten só para ênfase pontual.

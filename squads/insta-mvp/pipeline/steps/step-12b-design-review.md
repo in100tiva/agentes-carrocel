@@ -13,6 +13,7 @@ on_reject: step-12-designer-render
 - `squads/insta-mvp/output/{run_id}/images/` — imagens 01.jpg … 0N.jpg (geradas no step 12)
 - `squads/insta-mvp/pipeline/data/design-system-carousel-instagram.md` — **obrigatório:** critérios de hierarquia, camadas, CAPA/CONTEÚDO/FECHAMENTO, box único, dots, número atrás do título
 - `squads/insta-mvp/pipeline/data/brand-mvp-flow-colors.md` — **obrigatório:** paleta e tipografia MVP Flow
+- `squads/insta-mvp/pipeline/data/carousel-layout-rules.md` — **obrigatório:** §10 gráficos barras horizontais nos slides 2, 4 e 6 (quando N ≥ 6)
 - `squads/insta-mvp/agents/design-reviewer.agent.md` e tarefa review-carousel-visual
 
 ## Instructions

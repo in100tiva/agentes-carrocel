@@ -18,6 +18,8 @@ format: instagram-feed
 - `_opensquad/core/best-practices/image-design.md` (referência)
 - `_opensquad/_memory/company.md` — cores/marca se disponível
 - `squads/insta-mvp/pipeline/data/brand-mvp-flow-colors.md` — **obrigatório:** paleta branco, preto, roxo.
+- `squads/insta-mvp/pipeline/data/carousel-layout-rules.md` — **obrigatório:** §10 gráficos de barras horizontais nos slides **2, 4 e 6** (`.chart-block`, `<svg class="bar-chart">`, gutter de valores à direita).
+- `squads/insta-mvp/pipeline/data/carousel-visual-reference.md` — **obrigatório:** hierarquia título → gráfico hero → legenda nos slides de gráfico.
 - `squads/insta-mvp/pipeline/data/design-system-carousel-instagram.md` — **obrigatório:** hierarquia em 4 níveis, camadas (z-index), elementos por tipo (CAPA / CONTEÚDO / FECHAMENTO), badge pill, número decorativo atrás do título, seta orgânica, um box de destaque por slide, dots bottom.
 - `squads/insta-mvp/pipeline/data/mascote-reference-guide.md` — **para capa/fechamento:** guia para escolher a imagem do mascote por reação (estressado, alegre, perplexo, nervoso, analítico, pensativo, surpreso); analisar título, ângulo, tom e CTA e retornar mascote_escolhido + onde (capa/fechamento).
 - `squads/insta-mvp/pipeline/data/mascote-references/` — imagens nomeadas por reação: mascote_estressado.png, mascote_alegre.png, mascote_perplexo.png, mascote_nervoso.png, mascote_analitico.png, mascote_pensativo.png, mascote_surpreso.png.
@@ -29,7 +31,7 @@ format: instagram-feed
 2. Carregar **design-reference-profiles.md** e pesquisar (web_search ou similar) os perfis de referência para entender estilo visual (cores, tipografia, layout de carrossel). Definir design system alinhado a esse estilo.
 3. **Capa (slide 1):** Se existir `output/{run_id}/slides/slide-01.html` (criado no step 11b pelo Carlos Capa), **usar esse arquivo** e não regerar a capa. Caso contrário, gerar a capa na tarefa render-carousel (com mascote e degradê conforme guia).
 4. Carregar slides do carousel-draft (formato + conteúdo de cada slide). Para **fechamento** (e capa só se não houver slide-01 do step 11b): ler `mascote-reference-guide.md` se for usar mascote; escolher imagem em `mascote-references/` conforme o guia.
-5. Executar agente **Diana Design**: tarefa render-carousel. **Se slide-01.html já existir:** gerar apenas slide-02.html … slide-N.html; senão, gerar todos. Design system consistente; Playwright para screenshot. Se design-review.md (REJECT) existir, refazer só os slides em slides_to_redo conforme correction_brief.
+5. Executar agente **Diana Design**: tarefa render-carousel. **Se slide-01.html já existir:** gerar apenas slide-02.html … slide-N.html; senão, gerar todos. **Se N ≥ 6:** `slide-02.html`, `slide-04.html` e `slide-06.html` **devem** conter SVG de barras horizontais conforme `carousel-layout-rules.md` §10 (não entregar esses slides só com texto). Design system consistente; Playwright para screenshot. Se design-review.md (REJECT) existir, refazer só os slides em slides_to_redo conforme correction_brief.
 6. Renderizar **todos** os HTML (01..N) para JPEG em `squads/insta-mvp/output/{run_id}/images/01.jpg` … `0N.jpg`.
 7. Entregar lista de caminhos e design_system. O step 14 (publish) usará essas imagens e a legenda de caption-final.md.
 
@@ -45,3 +47,4 @@ Lista de paths das imagens; design_system (cores, fonte). Imagens em JPEG, 1080x
 ## Quality Criteria
 
 - [ ] Todas as imagens em output/{run_id}/images/; formato adequado para instagram-publisher (JPEG, 2–10 imagens).
+- [ ] Se N ≥ 6: imagens **02, 04 e 06** mostram gráfico de barras horizontais legível (aderência a §10).
